@@ -5,6 +5,12 @@ import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader.js';
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js';
 import { Hands } from '@mediapipe/hands';
 import { Camera } from '@mediapipe/camera_utils';
+import {
+  createVoiceUI,
+  initVoiceRecognition,
+  toggleVoiceRecognition
+} from './voice.js';
+/* ===== Voice Recognition Setup ===== */
 
 const container = document.getElementById('app');
 
@@ -50,6 +56,24 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // Better quality
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 container.appendChild(renderer.domElement);
+
+/* ===== Voice UI ===== */
+const { voiceButton, statusDiv, transcriptDiv } = createVoiceUI();
+
+/* ===== Initialize Voice Recognition ===== */
+const recognition = initVoiceRecognition(
+  statusDiv,
+  transcriptDiv,
+  voiceButton,
+  handleVoiceCommand
+);
+
+/* ===== Voice Button Toggle ===== */
+voiceButton.addEventListener('click', () => {
+  toggleVoiceRecognition(recognition, statusDiv);
+});
+
+
 
 /* ===== Lighting (ENHANCED) ===== */
 const light = new THREE.DirectionalLight(0xffffff, 1.5);
@@ -745,5 +769,34 @@ function playAnimation(name) {
     default:
       // Gentle idle animation handled in main animate loop
       break;
+  }
+}
+
+function handleVoiceCommand(command) {
+  console.log('🎙️ Voice command received:', command);
+
+  switch (command) {
+    case 'hello':
+      triggerWaveAnimation();
+      break;
+
+    case 'wave':
+      triggerWaveAnimation();
+      break;
+
+    case 'jump':
+      triggerJumpAnimation();
+      break;
+
+    case 'spin':
+      triggerSpinAnimation();
+      break;
+
+    case 'dance':
+      triggerDanceAnimation();
+      break;
+
+    default:
+      console.log('🤷 Unknown command:', command);
   }
 }
